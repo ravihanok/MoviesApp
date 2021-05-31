@@ -9,7 +9,7 @@ export interface MovieModal{
     soundEffects:[];
     stills:Stills[];
     title:string;
-    imdbID:string;
+    imdbId:string;
     listingType:string;
     imdbRating:string
 }
