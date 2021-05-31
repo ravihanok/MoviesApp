@@ -9,14 +9,17 @@ using MoviesApp.MovieModals;
 using MoviesApp.Service;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using System.Net;
 
 namespace MoviesApp
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public IWebHostEnvironment _env;
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            _env = env;
         }
 
         public IConfiguration Configuration { get; }
@@ -30,6 +33,23 @@ namespace MoviesApp
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+            
+            if (!_env.IsDevelopment())
+            {
+                services.AddHttpsRedirection(options =>
+                {
+                    options.RedirectStatusCode = (int)HttpStatusCode.PermanentRedirect;
+                    options.HttpsPort = 443;
+                });
+            }
+            else
+            {
+                services.AddHttpsRedirection(options =>
+                {
+                    options.RedirectStatusCode = (int)HttpStatusCode.TemporaryRedirect;
+                    options.HttpsPort = 5001;
+                });
+            }
             services.AddDbContextPool<MoviesDBContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("MoviesDB"));
@@ -52,12 +72,18 @@ namespace MoviesApp
             else
             {
                 app.UseExceptionHandler("/Error");
+                app.UseHsts();
             }
 
             app.UseStaticFiles();
             if (!env.IsDevelopment())
             {
                 app.UseSpaStaticFiles();
+
+            }
+            else
+            {
+
             }
 
             app.UseRouting();
