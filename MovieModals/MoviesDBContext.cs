@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -6,13 +7,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace MoviesApp.MovieModals
 {
-    public partial class MoviesDBContext : DbContext
+    public partial class MoviesDBContext : IdentityDbContext
     {
         public MoviesDBContext(DbContextOptions<MoviesDBContext> options)
             : base(options)
         {
         }
-
+        
         public virtual DbSet<Movie> Movies { get; set; }
         public virtual DbSet<Still> Stills { get; set; }
 
@@ -61,6 +62,7 @@ namespace MoviesApp.MovieModals
             });
 
             OnModelCreatingPartial(modelBuilder);
+            base.OnModelCreating(modelBuilder);
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

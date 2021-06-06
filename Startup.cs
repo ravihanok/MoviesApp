@@ -10,6 +10,11 @@ using MoviesApp.Service;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using System.Net;
+using MoviesApp.JwtToken;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace MoviesApp
 {
@@ -33,7 +38,28 @@ namespace MoviesApp
             {
                 configuration.RootPath = "ClientApp/dist";
             });
-            
+            services.AddScoped<IJwtTokenProvider, JwtTokenProvider>();
+            //services.AddScoped<UserManager<IdentityUser>>();
+            //services.AddScoped<RoleManager<IdentityRole>>();
+            //services.AddScoped<SignInManager<IdentityUser>>();
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<MoviesDBContext>()
+                .AddDefaultTokenProviders();
+            services.AddAuthentication(cfg => {
+                cfg.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                cfg.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Token:Key"])),
+                    ValidateIssuer = true,
+                    ValidIssuer = Configuration["Token:Issuer"]
+                };
+            });
+            services.AddAuthorization();
             if (!_env.IsDevelopment())
             {
                 services.AddHttpsRedirection(options =>
@@ -85,9 +111,10 @@ namespace MoviesApp
             {
 
             }
-
+           
             app.UseRouting();
-
+            app.UseAuthorization();
+            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
