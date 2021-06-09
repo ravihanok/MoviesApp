@@ -8,8 +8,8 @@ import { MovieModal } from '../movie-modal';
 })
 export class MovieService {
    
-    private apiUrl = "https://localhost:44383/api";
-    //private apiUrl ="https://brhwebapp.azurewebsites.net/api";
+    //private apiUrl = "https://localhost:44383/api";
+    private apiUrl ="https://brhwebapp.azurewebsites.net/api";
     constructor(private http:HttpClient){}
     getMoviesData(): Observable<MovieModal[]>{
        return this.http.get<MovieModal[]>(this.apiUrl+"/movies")

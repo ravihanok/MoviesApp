@@ -11,8 +11,8 @@ import { Iuser } from './iuser';
 export class AccountService {
   
 
-      private apiUrl = "https://localhost:44383/api";
-     // private apiUrl ="https://brhwebapp.azurewebsites.net/api";
+     // private apiUrl = "https://localhost:44383/api";
+      private apiUrl ="https://brhwebapp.azurewebsites.net/api";
      logoutEvent = new EventEmitter<boolean>();
      loginEvent = new EventEmitter<boolean>();
       helper = new JwtHelperService();
