@@ -32,13 +32,24 @@ namespace MoviesApp.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginModel loginModel)
         {
-
-            var user = await _userManager.FindByEmailAsync(loginModel.Email);
-
+            IdentityUser user =null;
+            if (loginModel.UserName != null)
+            {
+             user = await _userManager.FindByNameAsync(loginModel.UserName);
+            }
+            else if (loginModel.Email != null)
+            {
+                user = await _userManager.FindByEmailAsync(loginModel.Email);
+            }
+            if (user==null)
+            {
+                return Problem("login failed, username or password are incorrect");
+            }
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginModel.Password, false);
             if (!result.Succeeded)
             {
-                return BadRequest();
+                
+                return Problem("login failed, username or password are incorrect");
             }
             else
             {
@@ -65,12 +76,13 @@ namespace MoviesApp.Controllers
             {
                return Ok(new 
                 {
-                    result = result,
+                    result
                 });
             }
             else
             {
-                return BadRequest();
+                var errors = result.Errors.Select(e => e.Description).ToList();
+                return Problem(string.Join(",",errors));
             }
         }
     }

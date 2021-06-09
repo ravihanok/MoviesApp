@@ -19,7 +19,19 @@
         class="navbar-collapse collapse d-sm-inline-flex justify-content-end"
         [ngClass]="{ show: isExpanded }"
       >
+      <div>
+        {{username}}
+      </div>
         <ul class="navbar-nav flex-grow">
+          <li *ngIf="isLoggedIn;else logintemplate" class="nav-item" >
+            <span class="nav-link text-dark cursor-hand" (click)="logout()">Log out</span>
+          </li>
+          <ng-template #logintemplate>
+            <li class="nav-item" >
+              <a class="nav-link text-dark" [routerLink]="['/login']">Login</a>
+            </li>
+          </ng-template>
+          
           <li
             class="nav-item"
             [routerLinkActive]="['link-active']"
@@ -27,7 +39,7 @@
           >
             <a class="nav-link text-dark" [routerLink]="['/']">Home</a>
           </li>
-          <li class="nav-item" [routerLinkActive]="['link-active']">
+          <!-- <li class="nav-item" [routerLinkActive]="['link-active']">
             <a class="nav-link text-dark" [routerLink]="['/counter']"
               >Counter</a
             >
@@ -36,7 +48,7 @@
             <a class="nav-link text-dark" [routerLink]="['/fetch-data']"
               >Fetch data</a
             >
-          </li>
+          </li> -->
         </ul>
       </div>
     </div>
